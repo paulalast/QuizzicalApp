@@ -21,7 +21,8 @@ body {
 	font-family: var(--text-font);
 	font-weight: 400;
 }
-.welcome-screen {
+.welcome-screen,
+.quiz-screen {
 	display: flex;
 	position: relative;
 	margin: 2rem;
@@ -34,13 +35,15 @@ body {
 	color: var(--color-main);
 	border-radius: 3px;
 }
-.welcome-screen::before {
+.welcome-screen::before,
+.quiz-screen::before {
 	content: url("./assets/blob2.svg");
 	position: absolute;
 	top: 0;
 	right: 0;
 }
-.welcome-screen::after {
+.welcome-screen::after,
+.quiz-screen::after {
 	content: url("./assets/blob.svg");
 	position: absolute;
 	left: 0;
@@ -81,5 +84,17 @@ button:hover {
 	background-color: var(--white);
 	color: var(--color-main);
 	border: solid 2px var(--color-main);
-  padding: 2rem;
+}
+.question-box {
+	border-bottom: 1px solid var(--opacity-color-main);
+}
+.answers-box {
+	display: flex;
+	flex-direction: row;
+}
+button[type="radio"] {
+	height: 20px;
+	width: auto;
+	font-size: 10.24px;
+	margin: 1em;
 }

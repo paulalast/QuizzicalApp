@@ -1,4 +1,7 @@
 import React, { useState } from "react"
+import QuestionBox from "./QuestionBox"
+
+// https://opentdb.com/api.php?amount=5   API
 
 function WelcomeScreen({ onStart }) {
 	return (
@@ -14,12 +17,33 @@ function WelcomeScreen({ onStart }) {
 		</body>
 	)
 }
+function getQA() {
+	fetch(
+		"https://opentdb.com/api.php?amount=5&category=9&difficulty=easy&type=multiple"
+	)
+		.then(res => res.json())
+		.then(data => {
+			console.log(data.results[0].question) 
+			console.log(data.results[0].correct_answer)
+			console.log(data.results[0].incorrect_answers)
+		
+		})
+		.catch(error => {
+			console.log("error:", error)
+		})
+}
+getQA()
 
 function QuizScreen() {
 	return (
 		<body>
 			<main className='quiz-screen'>
-				<h1>Quiz Screen</h1>
+				<QuestionBox />
+				<QuestionBox />
+				<QuestionBox />
+				<QuestionBox />
+				<QuestionBox />
+				<button>Check answers</button>
 			</main>
 		</body>
 	)
