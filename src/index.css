@@ -81,4 +81,5 @@ button:hover {
 	background-color: var(--white);
 	color: var(--color-main);
 	border: solid 2px var(--color-main);
+  padding: 2rem;
 }
