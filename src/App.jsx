@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import QuestionBox from "./QuestionBox"
 import { v4 as uuidv4 } from "uuid"
 import Confetti from "react-confetti"
-
+const APILink = "https://opentdb.com/api.php?amount=5&type=multiple"
 function WelcomeScreen({ onStart }) {
 	return (
 		<div>
@@ -20,9 +20,7 @@ function WelcomeScreen({ onStart }) {
 
 async function getQA() {
 	try {
-		const res = await fetch(
-			"hhttps://opentdb.com/api.php?amount=5&type=multiple"
-		)
+		const res = await fetch(APILink)
 		const data = await res.json()
 
 		return data.results.map(result => {
