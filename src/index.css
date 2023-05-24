@@ -201,7 +201,7 @@ label.correct {
 	.welcome-screen,
 	.quiz-screen {
 		width: 85vw;
-		height: 90vh;
+		min-height: 90vh;
 		padding: 1rem;
 	}
 
@@ -214,7 +214,7 @@ label.correct {
 		padding: 0 1rem;
 	}
 
-	button {
+	.btn {
 		width: 160px;
 		height: 40px;
 		font-size: 1rem;
@@ -223,9 +223,5 @@ label.correct {
 
 	.question-box {
 		width: 100%;
-	}
-	label {
-		font-size: 0.7rem;
-		padding: 1rem;
 	}
 }

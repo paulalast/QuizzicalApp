@@ -126,10 +126,10 @@ function QuizScreen({ onPlayAgain }) {
 					/>
 				))}
 
-				{!checkAnswers && <button onClick={handleClick}>Check answers</button>}
+				{!checkAnswers && <button className="btn" onClick={handleClick}>Check answers</button>}
 
 				<p>{summary}</p>
-				{checkAnswers && <button onClick={playAgain}>Play again</button>}
+				{checkAnswers && <button className="btn" onClick={playAgain}>Play again</button>}
 			</main>
 			{showConfetti && <Confetti />}
 		</div>
