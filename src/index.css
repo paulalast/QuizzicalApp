@@ -196,3 +196,31 @@ label.fade {
 label.correct {
 	opacity: 1;
 }
+
+@media screen and (max-width: 650px) {
+	.welcome-screen,
+	.quiz-screen {
+		width: 90vw;
+		padding: 1rem;
+    margin: 1em;
+	}
+
+	h1 {
+		font-size: 24px;
+	}
+
+	h2 {
+		font-size: 14px;
+		padding: 0 1rem;
+	}
+
+	button {
+		width: 160px;
+		height: 40px;
+		font-size: 14px;
+	}
+
+	.question-box {
+		width: 100%;
+	}
+}
