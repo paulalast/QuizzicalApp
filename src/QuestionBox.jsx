@@ -3,47 +3,41 @@ function QuestionBox({
 	question,
 	answers,
 	correctAnswer,
-	questionIndex,
+	questionId,
 	handleAnswerSelected,
 	checkAnswers,
 }) {
 	const [selectedAnswer, setSelectedAnswer] = useState(null)
-
-	function handleAnswer(event) {
-		const answer = event.target.value
-		setSelectedAnswer(answer)
+	const handleAnswer = event => {
+		setSelectedAnswer(event.target.value)
 	}
-
-	function normalText(text) {
+	const normalText = text => {
 		const textArea = document.createElement("textarea")
 		textArea.innerHTML = text
 		return textArea.value
 	}
-
 	useEffect(() => {
 		if (checkAnswers) {
-			handleAnswerSelected(questionIndex, selectedAnswer)
-
+			handleAnswerSelected(questionId, selectedAnswer)
 			answers.forEach((answer, index) => {
 				if (answer !== selectedAnswer) {
 					const labelElement = document.querySelector(
-						`label[for="answer-${questionIndex}-${index}"]`
+						`label[for="answer-${questionId}-${index}"]`
 					)
 					labelElement.classList.add("fade")
 				}
 			})
 		}
 	}, [checkAnswers])
-
 	return (
 		<div className='question-box'>
 			<h2 className='question'>{normalText(question)}</h2>
 			<div className='answers-box'>
 				{answers.map((answer, index) => (
-					<div key={index}>
+					<div key={`${questionId}-${index}`}>
 						<input
 							type='radio'
-							id={`answer-${questionIndex}-${index}`}
+							id={`answer-${questionId}-${index}`}
 							name={question}
 							value={answer}
 							checked={selectedAnswer === answer}
@@ -51,7 +45,7 @@ function QuestionBox({
 							disabled={checkAnswers}
 						/>
 						<label
-							htmlFor={`answer-${questionIndex}-${index}`}
+							htmlFor={`answer-${questionId}-${index}`}
 							className={
 								checkAnswers
 									? selectedAnswer === null
@@ -76,5 +70,4 @@ function QuestionBox({
 		</div>
 	)
 }
-
 export default QuestionBox

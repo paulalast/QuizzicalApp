@@ -3,26 +3,22 @@ import QuestionBox from "./QuestionBox"
 import { v4 as uuidv4 } from "uuid"
 import Confetti from "react-confetti"
 const APILink = "https://opentdb.com/api.php?amount=5&type=multiple"
-function WelcomeScreen({ onStart }) {
-	return (
-		<div>
-			<main className='welcome-screen'>
-				<h1>Quizzical</h1>
-				<h2>
-					Unleash your inner trivia enthusiast <br /> in a thrilling journey
-					through knowledge!
-				</h2>
-				<button onClick={onStart}>Start quiz</button>
-			</main>
-		</div>
-	)
-}
-
-async function getQA() {
+const WelcomeScreen = ({ onStart }) => (
+	<div>
+		<main className='welcome-screen'>
+			<h1>Quizzical</h1>
+			<h2>
+				Unleash your inner trivia enthusiast <br /> in a thrilling journey
+				through knowledge!
+			</h2>
+			<button onClick={onStart}>Start quiz</button>
+		</main>
+	</div>
+)
+const getQA = async () => {
 	try {
-		const res = await fetch({ APILink })
+		const res = await fetch(APILink)
 		const data = await res.json()
-
 		return data.results.map(result => {
 			const answers = [result.correct_answer, ...result.incorrect_answers]
 			for (let i = answers.length - 1; i > 0; i--) {
@@ -38,19 +34,25 @@ async function getQA() {
 		})
 	} catch (error) {
 		console.log("error:", error)
-		return null
+		return alert("Oh no")
 	}
 }
-
-function QuizScreen({ onPlayAgain }) {
+const QuizScreen = ({ onPlayAgain }) => {
 	const [questions, setQuestions] = useState([])
 	const [correctAnswers, setCorrectAnswers] = useState([])
-	const [userAnswers, setUserAnswers] = useState(
-		Array(questions.length).fill(null)
-	)
+	const [userAnswers, setUserAnswers] = useState([])
 	const [summary, setSummary] = useState("")
 	const [checkAnswers, setCheckAnswers] = useState(false)
 	const [showConfetti, setShowConfetti] = useState(false)
+	useEffect(() => {
+		getQA().then(data => {
+			if (data) {
+				setQuestions(data)
+				setCorrectAnswers(data.map(questionData => questionData.correctAnswer))
+				setUserAnswers(new Array(data.length).fill(null))
+			}
+		})
+	}, [])
 	useEffect(() => {
 		if (
 			checkAnswers &&
@@ -59,20 +61,6 @@ function QuizScreen({ onPlayAgain }) {
 			setShowConfetti(true)
 		}
 	}, [checkAnswers, correctAnswers, userAnswers])
-
-	useEffect(() => {
-		getQA().then(data => {
-			if (data) {
-				const correctAnswers = data.map(
-					questionData => questionData.correctAnswer
-				)
-				setQuestions(data)
-				setCorrectAnswers(correctAnswers)
-				setUserAnswers(Array(data.length).fill(null))
-			}
-		})
-	}, [])
-
 	useEffect(() => {
 		if (checkAnswers) {
 			let correctAnswersCount = 0
@@ -81,26 +69,21 @@ function QuizScreen({ onPlayAgain }) {
 					correctAnswersCount++
 				}
 			}
-
 			setSummary(
 				`You scored ${correctAnswersCount}/${questions.length} correct answers!`
 			)
 		}
 	}, [userAnswers, correctAnswers, checkAnswers, questions.length])
-
-	function handleClick() {
-		setCheckAnswers(true)
-	}
-
-	function handleAnswerSelected(questionIndex, answer) {
+	const handleClick = () => setCheckAnswers(true)
+	const handleAnswerSelected = (questionId, answer) => {
 		setUserAnswers(prevAnswers => {
 			const newAnswers = [...prevAnswers]
-			newAnswers[questionIndex] = answer
+			const index = questions.findIndex(question => question.id === questionId)
+			newAnswers[index] = answer
 			return newAnswers
 		})
 	}
-
-	function playAgain() {
+	const playAgain = () => {
 		setQuestions([])
 		setCorrectAnswers([])
 		setUserAnswers([])
@@ -108,28 +91,25 @@ function QuizScreen({ onPlayAgain }) {
 		setCheckAnswers(false)
 		onPlayAgain()
 	}
-
 	return (
 		<div>
 			<main className='quiz-screen'>
-				{questions.map((questionData, index) => (
+				{questions.map(questionData => (
 					<QuestionBox
 						key={questionData.id}
 						question={questionData.question}
 						answers={questionData.answers}
 						correctAnswer={questionData.correctAnswer}
-						questionIndex={index}
+						questionId={questionData.id}
 						handleAnswerSelected={handleAnswerSelected}
 						checkAnswers={checkAnswers}
 					/>
 				))}
-
 				{!checkAnswers && (
 					<button className='btn' onClick={handleClick}>
 						Check answers
 					</button>
 				)}
-
 				<p>{summary}</p>
 				{checkAnswers && (
 					<button className='btn' onClick={playAgain}>
@@ -141,14 +121,9 @@ function QuizScreen({ onPlayAgain }) {
 		</div>
 	)
 }
-
-function App() {
+const App = () => {
 	const [quizStarted, setQuizStarted] = useState(false)
-
-	function handlePlayAgain() {
-		setQuizStarted(false)
-	}
-
+	const handlePlayAgain = () => setQuizStarted(false)
 	return (
 		<div className='app'>
 			{quizStarted ? (
@@ -159,5 +134,4 @@ function App() {
 		</div>
 	)
 }
-
 export default App
