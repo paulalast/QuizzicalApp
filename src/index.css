@@ -200,10 +200,9 @@ label.correct {
 @media screen and (max-width: 650px) {
 	.welcome-screen,
 	.quiz-screen {
-		width: 80vw;
-    height: 80vh;
+		width: 85vw;
+		height: 90vh;
 		padding: 1rem;
-		margin: 1em;
 	}
 
 	h1 {
@@ -228,5 +227,4 @@ label.correct {
 		font-size: 0.7rem;
 		padding: 1rem;
 	}
-	
 }
