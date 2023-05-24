@@ -1,7 +1,7 @@
 :root {
 	--title-font: "Karla", sans-serif;
 	--text-font: "Inter", sans-serif;
-	--bg-dark: #1c1c1c;
+	--bg-dark: #182132;
 	--bg-main: #f5f7fb;
 	--color-main: #4d5b9e;
 	--dark-color: #293264;
@@ -23,6 +23,7 @@ body {
 	font-family: var(--text-font);
 	font-weight: 400;
 }
+
 .welcome-screen,
 .quiz-screen {
 	display: flex;
@@ -37,9 +38,10 @@ body {
 	background-color: var(--bg-main);
 	color: var(--color-main);
 	border-radius: 5px;
-  overflow: hidden;
+	overflow: hidden;
 	box-shadow: 4px 4px 3px var(--color-main);
 }
+
 .welcome-screen::before,
 .quiz-screen::before {
 	content: url("./assets/blob2.svg");
@@ -48,6 +50,7 @@ body {
 	right: 0;
 	border-radius: inherit;
 }
+
 .welcome-screen::after,
 .quiz-screen::after {
 	content: url("./assets/blob.svg");
@@ -56,18 +59,22 @@ body {
 	bottom: -4px;
 	border-radius: inherit;
 }
+
 .quiz-screen::after {
 	content: url("./assets/blob3.svg");
 	border-radius: 50%;
 }
+
 .quiz-screen::before {
 	content: url("./assets/blob4.svg");
 }
+
 h1 {
 	margin: 0;
 	font-size: 31.25px;
 	font-family: var(--title-font);
 }
+
 h2 {
 	font-size: 16px;
 	text-align: center;
@@ -76,6 +83,7 @@ h2 {
 	font-weight: 700;
 	color: var(--dark-color);
 }
+
 button {
 	background-color: var(--color-main);
 	color: var(--white);
@@ -93,6 +101,7 @@ button {
 	transform: translateY(0);
 	cursor: pointer;
 }
+
 button:hover {
 	transition: 1000ms;
 	transform: translateY(-0px);
@@ -100,14 +109,17 @@ button:hover {
 	color: var(--color-main);
 	border: solid 2px var(--color-main);
 }
+
 .question-box {
 	border-bottom: 1.5px solid var(--opacity);
 	width: 90%;
 	z-index: 10;
 }
+
 .question {
 	text-align: left;
 }
+
 .answers-box {
 	display: flex;
 	flex-direction: row;
@@ -137,7 +149,7 @@ input[type="radio"] + label:before {
 	display: block;
 	width: 100%;
 	height: 100%;
-	border: 2px solid var(--opacity-color-main);
+	border: 1px solid var(--opacity-color-main);
 	border-radius: 8px;
 	position: absolute;
 	z-index: -1;
@@ -147,6 +159,7 @@ input[type="radio"] + label:before {
 	transform: translate(-50%, -50%);
 	transition: background-color 0.3s, border 0.1s ease-in-out;
 }
+
 label {
 	font-size: 10.5px;
 	z-index: 100;
@@ -163,9 +176,23 @@ input[type="radio"]:checked + label:before {
 	border: 2px solid var(--checked-answer);
 }
 
-.correctAnswer {
-	background: var(--correct-answer);
+input[type="radio"]:checked + label.correct::before {
+	background-color: var(--correct-answer);
 }
-.incorrectAnswer {
+input[type="radio"] + label.correct::before {
+	background-color: var(--correct-answer);
+	border: 1px solid var(--correct-answer);
+}
+
+input[type="radio"]:checked + label.incorrect::before,
+label.incorrect {
 	background-color: var(--wrong-answer);
+	border: 1px solid var(--wrong-answer);
+	color: rgba(77, 91, 157, 0.5);
+}
+label.fade {
+	opacity: 0.3;
+}
+label.correct {
+	opacity: 1;
 }

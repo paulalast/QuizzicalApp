@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react"
 import QuestionBox from "./QuestionBox"
+import { v4 as uuidv4 } from "uuid"
+import Confetti from "react-confetti"
 
 function WelcomeScreen({ onStart }) {
 	return (
@@ -15,10 +17,11 @@ function WelcomeScreen({ onStart }) {
 		</div>
 	)
 }
+
 async function getQA() {
 	try {
 		const res = await fetch(
-			"https://opentdb.com/api.php?amount=5&category=9&difficulty=easy&type=multiple"
+			"https://opentdb.com/api.php?amount=5&category=11&difficulty=easy&type=multiple"
 		)
 		const data = await res.json()
 
@@ -32,6 +35,7 @@ async function getQA() {
 				question: result.question,
 				answers: answers,
 				correctAnswer: result.correct_answer,
+				id: uuidv4(),
 			}
 		})
 	} catch (error) {
@@ -40,30 +44,94 @@ async function getQA() {
 	}
 }
 
-function QuizScreen() {
+function QuizScreen({ onPlayAgain }) {
 	const [questions, setQuestions] = useState([])
+	const [correctAnswers, setCorrectAnswers] = useState([])
+	const [userAnswers, setUserAnswers] = useState(
+		Array(questions.length).fill(null)
+	)
+	const [summary, setSummary] = useState("")
+	const [checkAnswers, setCheckAnswers] = useState(false)
+	const [showConfetti, setShowConfetti] = useState(false)
+	useEffect(() => {
+		if (
+			checkAnswers &&
+			userAnswers.every((answer, index) => answer === correctAnswers[index])
+		) {
+			setShowConfetti(true)
+		}
+	}, [checkAnswers, correctAnswers, userAnswers])
 
 	useEffect(() => {
 		getQA().then(data => {
 			if (data) {
+				const correctAnswers = data.map(
+					questionData => questionData.correctAnswer
+				)
 				setQuestions(data)
+				setCorrectAnswers(correctAnswers)
+				setUserAnswers(Array(data.length).fill(null))
 			}
 		})
 	}, [])
+
+	useEffect(() => {
+		if (checkAnswers) {
+			let correctAnswersCount = 0
+			for (let i = 0; i < correctAnswers.length; i++) {
+				if (correctAnswers[i] === userAnswers[i]) {
+					correctAnswersCount++
+				}
+			}
+
+			setSummary(
+				`You scored ${correctAnswersCount}/${questions.length} correct answers!`
+			)
+		}
+	}, [userAnswers, correctAnswers, checkAnswers, questions.length])
+
+	function handleClick() {
+		setCheckAnswers(true)
+	}
+
+	function handleAnswerSelected(questionIndex, answer) {
+		setUserAnswers(prevAnswers => {
+			const newAnswers = [...prevAnswers]
+			newAnswers[questionIndex] = answer
+			return newAnswers
+		})
+	}
+
+	function playAgain() {
+		setQuestions([])
+		setCorrectAnswers([])
+		setUserAnswers([])
+		setSummary("")
+		setCheckAnswers(false)
+		onPlayAgain()
+	}
+
 	return (
 		<div>
 			<main className='quiz-screen'>
 				{questions.map((questionData, index) => (
 					<QuestionBox
-						key={index}
+						key={questionData.id}
 						question={questionData.question}
 						answers={questionData.answers}
+						correctAnswer={questionData.correctAnswer}
 						questionIndex={index}
+						handleAnswerSelected={handleAnswerSelected}
+						checkAnswers={checkAnswers}
 					/>
 				))}
 
-				<button>Check answers</button>
+				{!checkAnswers && <button onClick={handleClick}>Check answers</button>}
+
+				<p>{summary}</p>
+				{checkAnswers && <button onClick={playAgain}>Play again</button>}
 			</main>
+			{showConfetti && <Confetti />}
 		</div>
 	)
 }
@@ -71,10 +139,14 @@ function QuizScreen() {
 function App() {
 	const [quizStarted, setQuizStarted] = useState(false)
 
+	function handlePlayAgain() {
+		setQuizStarted(false)
+	}
+
 	return (
 		<div>
 			{quizStarted ? (
-				<QuizScreen />
+				<QuizScreen onPlayAgain={handlePlayAgain} />
 			) : (
 				<WelcomeScreen onStart={() => setQuizStarted(true)} />
 			)}
@@ -83,11 +155,3 @@ function App() {
 }
 
 export default App
-
-/* 
-1. Add posibility to check the answers
-2. Count the correct answers
-3. If 5/5 answers confetti 
-4. Third screen - showing the correct and wrong answers - if answ checked is correct green, is wrong change color on red, and color the correct answ
-5. show how many answ is correct 2/5
- */

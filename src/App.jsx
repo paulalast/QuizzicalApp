@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react"
 import QuestionBox from "./QuestionBox"
+import { v4 as uuidv4 } from "uuid"
+import Confetti from "react-confetti"
 
 function WelcomeScreen({ onStart }) {
 	return (
@@ -15,10 +17,11 @@ function WelcomeScreen({ onStart }) {
 		</div>
 	)
 }
+
 async function getQA() {
 	try {
 		const res = await fetch(
-			"https://opentdb.com/api.php?amount=5&category=9&difficulty=easy&type=multiple"
+			"https://opentdb.com/api.php?amount=5&category=11&difficulty=easy&type=multiple"
 		)
 		const data = await res.json()
 
@@ -32,6 +35,7 @@ async function getQA() {
 				question: result.question,
 				answers: answers,
 				correctAnswer: result.correct_answer,
+				id: uuidv4(),
 			}
 		})
 	} catch (error) {
@@ -40,11 +44,23 @@ async function getQA() {
 	}
 }
 
-function QuizScreen() {
-	const [questions, setQuestions] = useState([]) // arr with all Q, A and correct answ
-	const [correctAnswers, setCorrectAnswers] = useState([]) // arr with all the correct answs
-	const [userAnswers, setUserAnswers] = useState([])
+function QuizScreen({ onPlayAgain }) {
+	const [questions, setQuestions] = useState([])
+	const [correctAnswers, setCorrectAnswers] = useState([])
+	const [userAnswers, setUserAnswers] = useState(
+		Array(questions.length).fill(null)
+	)
 	const [summary, setSummary] = useState("")
+	const [checkAnswers, setCheckAnswers] = useState(false)
+	const [showConfetti, setShowConfetti] = useState(false)
+	useEffect(() => {
+		if (
+			checkAnswers &&
+			userAnswers.every((answer, index) => answer === correctAnswers[index])
+		) {
+			setShowConfetti(true)
+		}
+	}, [checkAnswers, correctAnswers, userAnswers])
 
 	useEffect(() => {
 		getQA().then(data => {
@@ -54,21 +70,30 @@ function QuizScreen() {
 				)
 				setQuestions(data)
 				setCorrectAnswers(correctAnswers)
+				setUserAnswers(Array(data.length).fill(null))
 			}
 		})
 	}, [])
-	function handleClick() {
-		let correctAnswersCount = 0
-		for (let i = 0; i < correctAnswers.length; i++) {
-			if (correctAnswers[i] === userAnswers[i]) {
-				correctAnswersCount++
-			}
-		}
 
-		const summaryText = `You scored ${correctAnswersCount}/${correctAnswers.length} correct answers!`
-		setSummary(summaryText)
-		
+	useEffect(() => {
+		if (checkAnswers) {
+			let correctAnswersCount = 0
+			for (let i = 0; i < correctAnswers.length; i++) {
+				if (correctAnswers[i] === userAnswers[i]) {
+					correctAnswersCount++
+				}
+			}
+
+			setSummary(
+				`You scored ${correctAnswersCount}/${questions.length} correct answers!`
+			)
+		}
+	}, [userAnswers, correctAnswers, checkAnswers, questions.length])
+
+	function handleClick() {
+		setCheckAnswers(true)
 	}
+
 	function handleAnswerSelected(questionIndex, answer) {
 		setUserAnswers(prevAnswers => {
 			const newAnswers = [...prevAnswers]
@@ -76,22 +101,37 @@ function QuizScreen() {
 			return newAnswers
 		})
 	}
+
+	function playAgain() {
+		setQuestions([])
+		setCorrectAnswers([])
+		setUserAnswers([])
+		setSummary("")
+		setCheckAnswers(false)
+		onPlayAgain()
+	}
+
 	return (
 		<div>
 			<main className='quiz-screen'>
 				{questions.map((questionData, index) => (
 					<QuestionBox
-						key={index}
+						key={questionData.id}
 						question={questionData.question}
 						answers={questionData.answers}
+						correctAnswer={questionData.correctAnswer}
 						questionIndex={index}
 						handleAnswerSelected={handleAnswerSelected}
+						checkAnswers={checkAnswers}
 					/>
 				))}
 
-				<button onClick={handleClick}>Check answers</button>
+				{!checkAnswers && <button onClick={handleClick}>Check answers</button>}
+
 				<p>{summary}</p>
+				{checkAnswers && <button onClick={playAgain}>Play again</button>}
 			</main>
+			{showConfetti && <Confetti />}
 		</div>
 	)
 }
@@ -99,10 +139,14 @@ function QuizScreen() {
 function App() {
 	const [quizStarted, setQuizStarted] = useState(false)
 
+	function handlePlayAgain() {
+		setQuizStarted(false)
+	}
+
 	return (
 		<div>
 			{quizStarted ? (
-				<QuizScreen />
+				<QuizScreen onPlayAgain={handlePlayAgain} />
 			) : (
 				<WelcomeScreen onStart={() => setQuizStarted(true)} />
 			)}
