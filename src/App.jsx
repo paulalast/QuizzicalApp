@@ -126,10 +126,18 @@ function QuizScreen({ onPlayAgain }) {
 					/>
 				))}
 
-				{!checkAnswers && <button className="btn" onClick={handleClick}>Check answers</button>}
+				{!checkAnswers && (
+					<button className='btn' onClick={handleClick}>
+						Check answers
+					</button>
+				)}
 
 				<p>{summary}</p>
-				{checkAnswers && <button className="btn" onClick={playAgain}>Play again</button>}
+				{checkAnswers && (
+					<button className='btn' onClick={playAgain}>
+						Play again
+					</button>
+				)}
 			</main>
 			{showConfetti && <Confetti />}
 		</div>
@@ -144,7 +152,7 @@ function App() {
 	}
 
 	return (
-		<div>
+		<div className='app'>
 			{quizStarted ? (
 				<QuizScreen onPlayAgain={handlePlayAgain} />
 			) : (
