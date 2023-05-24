@@ -34,7 +34,7 @@ const getQA = async () => {
 		})
 	} catch (error) {
 		console.log("error:", error)
-		return alert("Oh no")
+		return null
 	}
 }
 const QuizScreen = ({ onPlayAgain }) => {

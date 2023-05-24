@@ -8,6 +8,7 @@ function QuestionBox({
 	checkAnswers,
 }) {
 	const [selectedAnswer, setSelectedAnswer] = useState(null)
+
 	const handleAnswer = event => {
 		setSelectedAnswer(event.target.value)
 	}
@@ -16,7 +17,7 @@ function QuestionBox({
 		textArea.innerHTML = text
 		return textArea.value
 	}
-	useEffect(() => {
+useEffect(() => {
 		if (checkAnswers) {
 			handleAnswerSelected(questionId, selectedAnswer)
 			answers.forEach((answer, index) => {
