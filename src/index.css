@@ -218,6 +218,7 @@ label.correct {
 		width: 160px;
 		height: 40px;
 		font-size: 1rem;
+		padding: 0.5rem;
 	}
 
 	.question-box {
