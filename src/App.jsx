@@ -20,7 +20,7 @@ function WelcomeScreen({ onStart }) {
 
 async function getQA() {
 	try {
-		const res = await fetch(APILink)
+		const res = await fetch({ APILink })
 		const data = await res.json()
 
 		return data.results.map(result => {
