@@ -37,6 +37,7 @@ body {
 	background-color: var(--bg-main);
 	color: var(--color-main);
 	border-radius: 5px;
+  overflow: hidden;
 	box-shadow: 4px 4px 3px var(--color-main);
 }
 .welcome-screen::before,
@@ -45,7 +46,6 @@ body {
 	position: absolute;
 	top: 0;
 	right: 0;
-	overflow: hidden;
 	border-radius: inherit;
 }
 .welcome-screen::after,
@@ -58,7 +58,7 @@ body {
 }
 .quiz-screen::after {
 	content: url("./assets/blob3.svg");
-  border-radius: 50%;
+	border-radius: 50%;
 }
 .quiz-screen::before {
 	content: url("./assets/blob4.svg");
@@ -128,7 +128,7 @@ input[type="radio"] + label {
 	position: relative;
 	margin: 0 1em;
 	cursor: pointer;
-	padding: 0 0.2rem;
+	padding: 0.1rem 0.3rem;
 	text-align: center;
 }
 
@@ -161,4 +161,11 @@ label {
 input[type="radio"]:checked + label:before {
 	background-color: var(--checked-answer);
 	border: 2px solid var(--checked-answer);
+}
+
+.correctAnswer {
+	background: var(--correct-answer);
+}
+.incorrectAnswer {
+	background-color: var(--wrong-answer);
 }

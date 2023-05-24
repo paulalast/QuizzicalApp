@@ -41,15 +41,41 @@ async function getQA() {
 }
 
 function QuizScreen() {
-	const [questions, setQuestions] = useState([])
+	const [questions, setQuestions] = useState([]) // arr with all Q, A and correct answ
+	const [correctAnswers, setCorrectAnswers] = useState([]) // arr with all the correct answs
+	const [userAnswers, setUserAnswers] = useState([])
+	const [summary, setSummary] = useState("")
 
 	useEffect(() => {
 		getQA().then(data => {
 			if (data) {
+				const correctAnswers = data.map(
+					questionData => questionData.correctAnswer
+				)
 				setQuestions(data)
+				setCorrectAnswers(correctAnswers)
 			}
 		})
 	}, [])
+	function handleClick() {
+		let correctAnswersCount = 0
+		for (let i = 0; i < correctAnswers.length; i++) {
+			if (correctAnswers[i] === userAnswers[i]) {
+				correctAnswersCount++
+			}
+		}
+
+		const summaryText = `You scored ${correctAnswersCount}/${correctAnswers.length} correct answers!`
+		setSummary(summaryText)
+		
+	}
+	function handleAnswerSelected(questionIndex, answer) {
+		setUserAnswers(prevAnswers => {
+			const newAnswers = [...prevAnswers]
+			newAnswers[questionIndex] = answer
+			return newAnswers
+		})
+	}
 	return (
 		<div>
 			<main className='quiz-screen'>
@@ -59,10 +85,12 @@ function QuizScreen() {
 						question={questionData.question}
 						answers={questionData.answers}
 						questionIndex={index}
+						handleAnswerSelected={handleAnswerSelected}
 					/>
 				))}
 
-				<button>Check answers</button>
+				<button onClick={handleClick}>Check answers</button>
+				<p>{summary}</p>
 			</main>
 		</div>
 	)
@@ -83,11 +111,3 @@ function App() {
 }
 
 export default App
-
-/* 
-1. Add posibility to check the answers
-2. Count the correct answers
-3. If 5/5 answers confetti 
-4. Third screen - showing the correct and wrong answers - if answ checked is correct green, is wrong change color on red, and color the correct answ
-5. show how many answ is correct 2/5
- */
